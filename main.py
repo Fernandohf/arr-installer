@@ -125,6 +125,9 @@ def render_next_steps_panel(lan_ip: str, selected_services: set[str], include_da
         lines.append(f"[bold cyan]Jellyseerr[/bold cyan]  http://{lan_ip}:5055")
     if include_qbit:
         lines.append(f"[bold cyan]qBittorrent[/bold cyan]  http://{lan_ip}:8080")
+    if "prowlarr" in selected_services:
+        lines.append("")
+        lines.append("[bold yellow]Manual step:[/bold yellow] Add your indexers in Prowlarr.")
 
     return Panel(
         "\n".join(lines),
