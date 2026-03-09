@@ -3,6 +3,8 @@ import questionary
 from pathlib import Path
 from datetime import datetime
 from zoneinfo import ZoneInfo, available_timezones
+
+from rich.panel import Panel
 from config import DEFAULT_INSTALL_PATH, SERVICE_CHOICES
 from ui import console, render_setup_summary
 
