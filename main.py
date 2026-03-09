@@ -1148,8 +1148,36 @@ def configure_jellyseerr(jellyseerr_key: str, jellyfin_config: dict, radarr_key:
 
 def main(verbose=False, debug=False):
     logging.info("--- Starting Installer Script Session ---")
+    
+    # Check if Docker is available
+    console.print("[yellow]Checking Docker availability...[/yellow]")
+    try:
+        result = subprocess.run(["docker", "--version"], capture_output=True, text=True, check=True)
+        console.print(f"[green]Docker available: {result.stdout.strip()}[/green]")
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        console.print("[bold red]Error: Docker is not installed or not available in PATH.[/bold red]")
+        console.print("[dim]Please install Docker and ensure it's running before proceeding.[/dim]")
+        sys.exit(1)
+    
+    # Check if Docker Compose is available
+    try:
+        result = subprocess.run(["docker", "compose", "version"], capture_output=True, text=True, check=True)
+        console.print(f"[green]Docker Compose available: {result.stdout.strip()}[/green]")
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        console.print("[bold red]Error: Docker Compose is not available.[/bold red]")
+        console.print("[dim]Please ensure Docker Compose is installed.[/dim]")
+        sys.exit(1)
+    
     (install_path, timezone, selected_services,
      global_user, global_pass, global_email) = get_user_input()
+    
+    # Check if docker-compose.yml already exists
+    docker_compose_path = install_path / "docker-compose.yml"
+    if docker_compose_path.exists():
+        console.print(f"[yellow]Warning: A docker-compose.yml file already exists at {docker_compose_path}[/yellow]")
+        if not questionary.confirm("Do you want to overwrite the existing docker-compose.yml file?", default=False).ask():
+            console.print("[dim]Installation cancelled by user.[/dim]")
+            sys.exit(0)
 
     include_fs = "flaresolverr" in selected_services
     include_dashy = "dashy" in selected_services
