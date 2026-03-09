@@ -195,7 +195,8 @@ def get_timezone_choices():
         for zone in fallback_zones:
             choices.append(("+0000", zone, zone))
             
-    choices.sort(key=lambda x: x[0])
+    choices.sort(key=lambda x: x[2])  # Sort alphabetically by timezone name
+    choices.sort(key=lambda x: x[0])  # Then sort by UTC offset
     return[questionary.Choice(title=c[1], value=c[2]) for c in choices]
 
 def get_user_input():
